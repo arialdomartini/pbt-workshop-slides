@@ -20,7 +20,7 @@ transition: slide-left
 mdc: true
 # take snapshot for each slide in the overview
 overviewSnapshots: true
-
+lineNumbers: true
 ---
 
 # PBT Workshop
@@ -280,3 +280,351 @@ Property the_catalog_always_lists_products_in_alphabetical_order() =>
                 SortingAgainIsIdempotent(listOfProducts);
         });
 ```
+
+---
+
+# Lati negativi
+
+* Difficile.
+* Capire cosa sia una proprietà a volte non è banale.
+* Una nicchia di una nicchia.
+
+---
+
+# Non è una questione di casualità
+
+Fuzzy Generation != killer feature
+
+> Per questioni legali  
+> i prodotti alimentari non possono essere parte di spedizioni internazionali  
+> a meno che non ci sia una promozione attiva.
+
+<br/>
+
+```csharp
+if(product.Type == Food && order.Destination != LocalCountry)
+    throw new CannotBeSentException();
+```
+
+C'è un bug?
+
+---
+
+# Verifica di una proprietà
+
+* Logic, come in Prolog
+* Theory Prover
+* AI
+* Concolic Testing
+* Brute force
+* niente
+
+
+---
+
+# Fixture
+
+```csharp
+[Fact]
+void calcutates_the_sum_of_2_numbers()
+{
+    var sum = add(2, 3);
+    
+    Assert.Equal(5, sum);
+}
+```
+
+```csharp
+[Theory]
+[InlineData(2, 3, 5)]
+[InlineData(2, 0, 2)]
+[InlineData(0, 2, 2)]
+[InlineData(2, -2, 0)]
+[InlineData(9999, -2, 9997)]
+void calcutates_the_sum_of_2_numbers(int a, int b, int expectedSum)
+{
+    var sum = add(a, b);
+    
+    Assert.Equal(expectedSum, sum);
+}
+```
+
+---
+
+# Generatori
+
+* Food products can be discounted
+
+```csharp
+[Theory]
+[InlineData(new Product(name: "Apple",  category: Categories.Fruits,   price: 0.90,  description: "Delicious Fuji apple"))
+[InlineData(new Product(name: "'Nduja", category: Categories.Sausages, price: 9.50,  description: "Spicy. Original from Calabria"))
+void discountable_products(Product product)
+{
+    var discountIsApplyed = _catalog.CanBeDiscounted(product);
+    
+    Assert.True(discountIsApplyed);
+}
+```
+
+```csharp
+[Property]
+void any_product_classified_as_food_is_discountable([Food] Product product)
+{
+    Assert.True(_catalog.CanBeDiscounted(product));
+}
+```
+
+
+---
+
+# Shrinking
+
+
+Contro esempi:
+
+```csharp
+new Product(name: ___, category: Categories.SoftDrinks, price: ___,  description: ___)}
+```
+
+
+```csharp
+I get the general rule. But, hey! I found a counterexample! Here it is:
+
+  new Product(name: ___, category: Categories.SoftDrinks, price: ___,  description: ___)}
+
+Don't even care about `name`, `price` and other fields: the element 
+causing the problem is 
+
+  category = Categories.SoftDrinks
+  
+Apparently, the production code is not considering soft drinks as a food. 
+Either this is a bug, or your specification is incomplete.
+```
+
+---
+
+# Proprietà
+
+```csharp
+[Theory]
+[InlineData(   2,  3,    5)]
+[InlineData(   2,  0,    2)]
+[InlineData(   0,  2,    2)]
+[InlineData(   2, -2,    0)]
+[InlineData(9999, -2, 9997)]
+void calcutates_the_sum_of_2_numbers(int a, int b, int expectedSum)
+{
+    var sum = add(a, b);
+    
+    Assert.Equal(expectedSum, sum);
+}
+```
+
+```csharp
+[Property]
+void calcutates_the_sum_of_2_numbers(int a, int b)
+{
+    var sum = add(a, b);
+    
+    Assert.Equal(???, sum);
+}
+```
+
+---
+
+# Scelte deboli
+
+```csharp
+[Property]
+void calcutates_the_sum_of_2_numbers(int a, int b)
+{
+    var sum = add(a, b);
+    
+    var expected = a + b;
+    
+    Assert.Equal(expected, sum);
+}
+```
+
+---
+
+# Idealmente
+
+```csharp
+[Property]
+void account_name_is_unique(
+    [AllDifferent] Account[] existingAccounts, 
+    [FormWithDuplicatedAccount] RegistrationForm form)
+{
+    var validationResult = _register(form);
+    
+    Assert.Equal(Error("Account already exists"), validationResult);
+}
+```
+
+```csharp
+[Property]
+void no_discounts_is_applied_to_carts_without_food(
+    [CartContainingNoFoodProducts] List<Product> products)
+{
+    var plainSumOfPrices = products.Sum(p => p.Price);
+    _cart.Add(products)
+    
+    var total = _cart.Checkout();
+    
+    Assert.Equal(plainSumOfPrices, total)
+}
+```
+
+---
+
+# Custom functions
+
+```csharp
+[Fact]
+void account_name_is_unique()
+{
+    Account[] existingAccounts = GenerateAllDifferent();
+    RegistrationForm form = GenerateWithADuplicateFrom(existingAccounts);
+
+    _application.Accounts = accounts;
+
+    var validationResult = _register(form);
+    
+    Assert.Equal(Error("Account already exists"), validationResult);
+}
+```
+
+```csharp
+record Input(Account[] ExistingAccounts, RegistrationForm form)
+
+[Fact]
+void account_name_is_unique()
+{
+    Input[] inputs = Generate(10_000);
+
+    inputs.ForEach(input =>
+        _application.Accounts = input.accounts;
+
+        var validationResult = _register(input.Accounts, input.Form);
+    
+        Assert.Equal(Error("duplicated"), validationResult);
+    )
+}
+```
+
+Non compone!
+
+```csharp
+    Account[] existingAccountsIncludingDisabledOnes = 
+        GenerateAllDifferent()
+            .ComposedWith(HavingAtLeast3DisabledAccounts());
+```
+
+---
+
+# Generatori
+
+```csharp
+Generator :: Random -> Size -> data
+```
+
+---
+
+# Caso reale di uso di generatori
+
+```csharp {all|7,9}
+record Product(Guid Id, string Name, decimal Price, Category category);
+
+Gen<Product> products =
+    from id in Arb.Generate<Guid>()
+    from name in Arb.Generate<string>()
+    from price in Arb.Generate<decimal>()
+    from category in Arb.Generate<Category>()
+	
+    select new Product(Id: id, Name: name, Price: price, Category: category);
+```
+
+---
+
+# Caso reale di uso di generatori
+
+```fsharp
+record User(int Id, string FirstName, string LastName);
+
+Gen<User> users =
+    from fistName in Gen.Elements("Don", "Henrik", null)
+    from secondName in Gen.Elements("Syme", "Feldt")
+    from id in Gen.Choose(0, 1000)
+    select new User(id, firstName, secondName);
+```
+
+---
+transition: none
+---
+
+# Anatomia di un property test
+
+```csharp {all|2|6|8|8,4|all}
+[Property]
+Property square_of_numbers_are_non_negative()
+{
+    Arbitrary<int> numbers = Arb.From<int>();
+
+    int square(int n) => n * n;
+
+    return ForAll(numbers, n => square(n) >= 0;);
+}
+```
+---
+transition: none
+---
+
+# Anatomia di un property test
+
+```csharp
+[Property]
+Property square_of_numbers_are_non_negative()
+{
+    Arbitrary<int> numbers = Arb.From<int>();
+
+    int square(int n) => n * n;
+
+    bool squareIsNotNegative(int n) => square(n) >= 0;
+
+    return ForAll(numbers, squareIsNotNegative);
+}
+```
+
+---
+transition: none
+---
+
+# Anatomia di un property test
+
+```csharp
+[Property]
+Property square_of_numbers_are_non_negative() =>
+    ForAll(Arb.From<int>(), n => square(n) >= 0);
+```
+
+---
+transition: none
+---
+
+# Anatomia di un property test
+
+```csharp
+[Property]
+bool square_of_numbers_are_non_negative(int n) =>
+    square(n) >= 0;
+```
+
+
+---
+transition: slide-left
+---
+
+# Fine
+
