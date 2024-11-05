@@ -201,7 +201,7 @@ void multiples_of_15_return_fizzbuzz(int multipleOf15)
 ```
 
 
-```csharp {all|2|6,8}
+```csharp {all|2|6|9}
 [Property]
 Property all_the_multiples_of_15_return_fizzbuzz()
 {
@@ -209,7 +209,8 @@ Property all_the_multiples_of_15_return_fizzbuzz()
         Arb.Generate<int>()
             .Select(i => i * 15));
 
-    return Prop.ForAll(multiplesOf15, n => fizzbuzz(n) == "fizzbuzz");
+    return Prop.ForAll(multiplesOf15, n => 
+        fizzbuzz(n) == "fizzbuzz");
 }
 ```
 ````
@@ -417,36 +418,6 @@ void calcutates_the_sum_of_2_numbers(int a, int b, int expectedSum)
 
 ---
 
-# Fixture: non possono usare tipi non primitivi
-
-> Food products can be discounted
-
-```csharp
-[Theory]
-[InlineData(
-    new Product(
-        name: "Apple",
-        category: Categories.Fruits,
-        price: 0.90,
-        description: "Delicious Fuji apple"))
-[InlineData(
-    new Product(
-        name: "'Nduja",
-        category:
-        Categories.Sausages,
-        price: 9.50,
-        description: "Spicy. Original from Calabria"))
-        
-void discountable_products(Product product)
-{
-    var discountIsApplyed = _catalog.CanBeDiscounted(product);
-    
-    Assert.True(discountIsApplyed);
-}
-```
-
----
-
 # Auto-Fixture con regole di dominio
 
 ```csharp
@@ -538,6 +509,119 @@ int Add(int a, int b) =>
 ```
 
 ---
+
+# Fixture: Theory?
+
+> "Theories are tests which are only true for a particular set of
+> data."
+
+<arrow v-click="[2,3]" x1="400" y1="140" x2="345" y2="190" color="#953" width="2" arrowSize="1" style="z-index: 9999;"/>
+
+<div v-click="1">
+```csharp
+[Theory]
+[InLineData(2, 2, 4)]
+[InLineData(5, 7, 12)]
+void sum(int a, int b, int expectedValue)
+{
+    ....
+    AssertEqual(expectedValue, result);
+}
+```
+</div>
+
+<br/>
+
+<div v-click="3">
+
+```csharp
+  [Theory]
+  [InlineData(5, 1, 3, 9)]
+  [InlineData(7, 1, 5, 3)]
+  public void AllNumbers_AreOdd_WithInlineData(int a, int b, int c, int d)
+  {
+      Assert.True(IsOddNumber(a));
+      Assert.True(IsOddNumber(b));
+      Assert.True(IsOddNumber(c));
+      Assert.True(IsOddNumber(d));
+  }
+}
+```
+
+</div>
+
+---
+transition: none
+---
+
+# Fixture: Theory!
+
+<br/><br/>
+
+<div style="margin-left:auto; margin-right: auto; width:100%">
+        <img src="./img/theory.png" >
+</div>
+
+<br/><br/><br/>
+
+## References
+* [Why Did we Build xUnit 1.0?](https://xunit.net/docs/why-did-we-build-xunit-1.0)
+* [Why the word "Theory" as opposed to something like "MultiFact"? #2822](https://github.com/xunit/xunit/discussions/2822)
+
+
+---
+transition: slide-left
+---
+
+
+# Fixture: Theory!
+
+
+<arrow x1="150" y1="230" x2="275" y2="260" color="#953" width="2" arrowSize="1" style="z-index: 9999;"/>
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+        <img src="./img/theory-abstract.png" >
+</div>
+
+
+## References
+* [Theories in practice: Easy-to-write specifications that catch bugs](https://homes.cs.washington.edu/~mernst/pubs/testing-theories-tr002-abstract.html)
+
+---
+transition: slide-left
+---
+
+
+# Fixture: non possono usare tipi non primitivi
+
+> Food products can be discounted
+
+```csharp
+[Theory]
+[InlineData(
+    new Product(
+        name: "Apple",
+        category: Categories.Fruits,
+        price: 0.90,
+        description: "Delicious Fuji apple"))
+[InlineData(
+    new Product(
+        name: "'Nduja",
+        category:
+        Categories.Sausages,
+        price: 9.50,
+        description: "Spicy. Original from Calabria"))
+        
+void discountable_products(Product product)
+{
+    var discountIsApplyed = _catalog.CanBeDiscounted(product);
+    
+    Assert.True(discountIsApplyed);
+}
+```
+
+---
+
 
 # Idealmente: attributi magici
 
@@ -682,7 +766,15 @@ void no_discounts_is_applied_to_carts_without_food(
 
 # Nella realtà: Generators
 
-Esempio su prodotto alimentare
+```fsharp
+record User(int Id, string FirstName, string LastName);
+
+Gen<User> users =
+    from fistName in Gen.Elements("Don", "Henrik", null)
+    from secondName in Gen.Elements("Syme", "Feldt")
+    from id in Gen.Choose(0, 1000)
+    select new User(id, firstName, secondName);
+```
 
 ---
 
@@ -755,22 +847,6 @@ bool some_property_about_products(Product product) =>
 
 ---
 
-# Caso reale di uso di generatori
-
-```fsharp
-record User(int Id, string FirstName, string LastName);
-
-Gen<User> users =
-    from fistName in Gen.Elements("Don", "Henrik", null)
-    from secondName in Gen.Elements("Syme", "Feldt")
-    from id in Gen.Choose(0, 1000)
-    select new User(id, firstName, secondName);
-```
-
----
-transition: none
----
-
 # Anatomia di un property test
 
 ```csharp {all|2|6|8|8,4|all}
@@ -834,7 +910,7 @@ transition: slide-left
 ---
 
 
-# Property
+# Property: la somma
 
 ```csharp
 [Property]
@@ -981,3 +1057,33 @@ int Add(int a, int b) =>
 
 
 ---
+
+# Property: la somma
+
+```csharp
+[Property]
+void calcutates_the_sum_of_2_numbers(int a, int b)
+{
+    var sum = Add(a, b);
+
+}
+```
+
+<br/>
+
+```csharp
+int Add(int a, int b) =>
+    a + b;
+```
+
+
+<div v-click>
+<br/><br/>
+
+- [Scott Wlaschin - The Enterprise Developer From Hell](https://fsharpforfunandprofit.com/posts/property-based-testing/)
+- [Scott Wlaschin - An Introduction to Property-Based Testing](https://fsharpforfunandprofit.com/pbt/)
+- [Scott Wlaschin - The lazy programmer's guide to writing thousands of tests](https://www.slideshare.net/slideshow/the-lazy-programmers-guide-to-writing-thousands-of-tests/232565051)
+</div>
+
+---
+
