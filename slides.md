@@ -41,6 +41,7 @@ Un workshop introduttivo a Property-Based Testing
 
 
 <br/>
+<div v-click>
 
 ### Esempio concreto
 
@@ -53,6 +54,7 @@ Un workshop introduttivo a Property-Based Testing
 > * Latte
 > * Muffin
 
+</div>
 ---
 
 # Requisito #2
@@ -61,10 +63,13 @@ Un workshop introduttivo a Property-Based Testing
 > Gli account name sono unici e case insensitive
 
 <br/>
+<div v-click>
 
 ### Esempio concreto
-> Per esempio, non si possono avere 2 `john.doe`.<br/>
+> Per esempio, non si possono avere 2 `john.doe`<br/>
 > Inoltre, `john.doe` e `John.Doe` sono lo stesso account.
+
+</div>
 
 ---
 
@@ -76,6 +81,8 @@ Un workshop introduttivo a Property-Based Testing
 
 <br/>
 
+<div v-click>
+
 ### Esempio concreto
 > Supponiamo che un cliente acquisti 2 tazze di caffè, 1 latte e 1
 muffin per 4 persone.<br/>
@@ -84,13 +91,41 @@ EUR.<br/>
 > Latte e Muffin attivano la Promozione 2, 0,8 EUR.<br/>
 >In questo caso, applichiamo la Promozione 1, perché è la più conveniente
 
+</div>
 
 ---
 
 # Un Property Test di esempio: repository
 
+<div v-click="1">
+
+> Quando un prodotto viene salvato<br/>
+> può essere ricaricato dal disco tramite il suo ID.
+
+<br/>
+</div>
 
 ````md magic-move {lines: true}
+```csharp
+record Product(Guid Id, string Name, Category Category, decimal Price);
+
+[Fact]
+void products_can_be_persisted()
+{
+    var product = new Product(
+        Id: Guid.NewGuid(),
+        Name: "The Little Schemer", 
+        Category: Books, 
+        Price: 16.50M);
+    
+    _repository.Save(product);
+
+    var found = _repository.LoadById(product.Id);
+
+    Assert.Equal(found, product);
+}
+```
+
 ```csharp
 record Product(Guid Id, string Name, Category Category, decimal Price);
 
@@ -131,6 +166,15 @@ bool all_products_can_be_persisted(Product product)
 # Un Property Test di esempio: Fizz Buzz
 
 
+<div v-click="1">
+
+> I multipli di 15<br/>
+> producono "fizzbuzz"
+
+<br/>
+</div>
+
+
 ````md magic-move {lines: true}
 ```csharp
 [Theory]
@@ -143,6 +187,19 @@ void multiples_of_15_return_fizzbuzz(int multipleOf15)
     Assert.Equal("fizzbuzz", fizzbuzz(multipleOf15));
 }
 ```
+
+```csharp
+[Theory]
+[InlineData(15)]
+[InlineData(30)]
+[InlineData(45)]
+[InlineData(60)]
+void multiples_of_15_return_fizzbuzz(int multipleOf15)
+{
+    Assert.Equal("fizzbuzz", fizzbuzz(multipleOf15));
+}
+```
+
 
 ```csharp {all|2|6,8}
 [Property]
@@ -157,17 +214,9 @@ Property all_the_multiples_of_15_return_fizzbuzz()
 ```
 ````
 
-
-
-<span v-click="3">Multipli di 15 (Divisibili per 15) -> "FizzBuzz"</span>
-
-
----
-transition: none
 ---
 
-# Property Test di esempio:
-
+# Property Test di esempio: account unici e case insensitive
 
 > Gli account name sono unici e case insensitive.<br/>
 > Per esempio, non si possono avere 2 `john.doe`.<br/>
@@ -191,11 +240,11 @@ internal static class AuthenticationSystem
 
 ---
 
-# Property Test di esempio: account unici e case insensitive
+
+# Property Test di esempio: account unici
 
 > Gli account name sono unici e case insensitive.<br/>
 > Per esempio, non si possono avere 2 `john.doe`.<br/>
-> Inoltre, `john.doe` e `John.Doe` sono lo stesso account.<br/>
 
 <br/>
 
@@ -208,6 +257,20 @@ bool account_names_are_unique(List<Employee> employees)
     return accountNames.ContainNoDuplicates();
 }
 
+bool ContainNoDuplicates(IEnumerable<string> xs) =>
+    xs.SequenceEqual(xs.Distinct());
+```
+
+---
+
+# Property Test di esempio: account case insensitive
+
+> Gli account name sono unici e case insensitive.<br/>
+> Per esempio, non si possono avere 2 `john.doe`.<br/>
+
+<br/>
+
+```csharp
 [Property]
 bool account_names_are_case_insensitive_(Employee employee)
 {
@@ -219,8 +282,6 @@ bool account_names_are_case_insensitive_(Employee employee)
 }
 ```
 
----
-transition: slide-left
 ---
 
 # Property Test di esempio: promozioni
@@ -312,6 +373,8 @@ C'è un bug?
 
 # Verifica di una proprietà
 
+<v-clicks>
+
 * Logic, come in Prolog
 * Theory Prover
 * AI
@@ -319,16 +382,18 @@ C'è un bug?
 * Brute force
 * niente
 
+</v-clicks>
 
 ---
 
 # Fixture
 
+````md magic-move {lines: true}
 ```csharp
 [Fact]
 void calcutates_the_sum_of_2_numbers()
 {
-    var sum = add(2, 3);
+    var sum = Add(2, 3);
     
     Assert.Equal(5, sum);
 }
@@ -343,22 +408,35 @@ void calcutates_the_sum_of_2_numbers()
 [InlineData(9999, -2, 9997)]
 void calcutates_the_sum_of_2_numbers(int a, int b, int expectedSum)
 {
-    var sum = add(a, b);
+    var sum = Add(a, b);
     
     Assert.Equal(expectedSum, sum);
 }
 ```
+````
 
 ---
 
-# Generatori
+# Fixture: non possono usare tipi non primitivi
 
-* Food products can be discounted
+> Food products can be discounted
 
 ```csharp
 [Theory]
-[InlineData(new Product(name: "Apple",  category: Categories.Fruits,   price: 0.90,  description: "Delicious Fuji apple"))
-[InlineData(new Product(name: "'Nduja", category: Categories.Sausages, price: 9.50,  description: "Spicy. Original from Calabria"))
+[InlineData(
+    new Product(
+        name: "Apple",
+        category: Categories.Fruits,
+        price: 0.90,
+        description: "Delicious Fuji apple"))
+[InlineData(
+    new Product(
+        name: "'Nduja",
+        category:
+        Categories.Sausages,
+        price: 9.50,
+        description: "Spicy. Original from Calabria"))
+        
 void discountable_products(Product product)
 {
     var discountIsApplyed = _catalog.CanBeDiscounted(product);
@@ -366,6 +444,10 @@ void discountable_products(Product product)
     Assert.True(discountIsApplyed);
 }
 ```
+
+---
+
+# Auto-Fixture con regole di dominio
 
 ```csharp
 [Property]
@@ -375,36 +457,35 @@ void any_product_classified_as_food_is_discountable([Food] Product product)
 }
 ```
 
+---
+
+# Shrinking: Controesempi
+
+> I get the general rule. But, hey! I found a counterexample!<br/>
+> Here it is:
+> 
+> ```csharp
+>   new Product(
+>     Name: _,
+>     Category: Categories.SoftDrinks,
+>     Price: _,
+>     Description: _)}
+> ```
+> 
+> Don't even care about `name`, `price` and other fields: the element 
+> causing the problem is 
+>
+> ```csharp
+>   category = Categories.SoftDrinks
+> ```
+>   
+> Apparently, the production code is not considering soft drinks as a food.<br/>
+> Either this is a bug, or your specification is incomplete.
+
 
 ---
 
-# Shrinking
-
-
-Contro esempi:
-
-```csharp
-new Product(name: ___, category: Categories.SoftDrinks, price: ___,  description: ___)}
-```
-
-
-```csharp
-I get the general rule. But, hey! I found a counterexample! Here it is:
-
-  new Product(name: ___, category: Categories.SoftDrinks, price: ___,  description: ___)}
-
-Don't even care about `name`, `price` and other fields: the element 
-causing the problem is 
-
-  category = Categories.SoftDrinks
-  
-Apparently, the production code is not considering soft drinks as a food. 
-Either this is a bug, or your specification is incomplete.
-```
-
----
-
-# Proprietà
+# Proprietà: non solo una questione di auto-fixture
 
 ```csharp
 [Theory]
@@ -415,17 +496,19 @@ Either this is a bug, or your specification is incomplete.
 [InlineData(9999, -2, 9997)]
 void calcutates_the_sum_of_2_numbers(int a, int b, int expectedSum)
 {
-    var sum = add(a, b);
+    var sum = Add(a, b);
     
     Assert.Equal(expectedSum, sum);
 }
 ```
 
+<br/>
+
 ```csharp
 [Property]
 void calcutates_the_sum_of_2_numbers(int a, int b)
 {
-    var sum = add(a, b);
+    var sum = Add(a, b);
     
     Assert.Equal(???, sum);
 }
@@ -439,7 +522,7 @@ void calcutates_the_sum_of_2_numbers(int a, int b)
 [Property]
 void calcutates_the_sum_of_2_numbers(int a, int b)
 {
-    var sum = add(a, b);
+    var sum = Add(a, b);
     
     var expected = a + b;
     
@@ -447,9 +530,16 @@ void calcutates_the_sum_of_2_numbers(int a, int b)
 }
 ```
 
+<br/>
+
+```csharp
+int Add(int a, int b) =>
+    a + b;
+```
+
 ---
 
-# Idealmente
+# Idealmente: attributi magici
 
 ```csharp
 [Property]
@@ -462,6 +552,11 @@ void account_name_is_unique(
     Assert.Equal(Error("Account already exists"), validationResult);
 }
 ```
+
+
+---
+
+# Idealmente: attributi magici
 
 ```csharp
 [Property]
@@ -479,7 +574,7 @@ void no_discounts_is_applied_to_carts_without_food(
 
 ---
 
-# Custom functions
+# Funzioni ad-hoc
 
 ```csharp
 [Fact]
@@ -495,6 +590,10 @@ void account_name_is_unique()
     Assert.Equal(Error("Account already exists"), validationResult);
 }
 ```
+
+---
+
+# Funzioni ad-hoc
 
 ```csharp
 record Input(Account[] ExistingAccounts, RegistrationForm form)
@@ -514,6 +613,11 @@ void account_name_is_unique()
 }
 ```
 
+---
+
+# Funzioni ad-hoc: non compongono
+
+
 Non compone!
 
 ```csharp
@@ -523,6 +627,67 @@ Non compone!
 ```
 
 ---
+
+
+
+# Nella realtà
+
+- Type-Driven Design
+- Properties (Essential Properties and Collateral Properties)
+- Generators
+
+---
+
+# Nella realtà: Type-Driven Design
+
+````md magic-move {lines: true}
+```csharp
+[Property]
+void no_discounts_is_applied_to_carts_without_food(
+    [CartContainingElectronicProducts] List<Product> products)
+{
+    var plainSumOfPrices = products.Sum(p => p.Price);
+    _cart.Add(products)
+    
+    var total = _cart.Checkout();
+    
+    Assert.Equal(plainSumOfPrices, total)
+}
+```
+
+```csharp
+[Property]
+void no_discounts_is_applied_to_carts_without_food(
+    List<ElectronicProduct> products)
+{
+    var plainSumOfPrices = products.Sum(p => p.Price);
+    _cart.Add(products)
+    
+    var total = _cart.Checkout();
+    
+    Assert.Equal(plainSumOfPrices, total)
+}
+```
+````
+
+---
+
+
+# Nella realtà: Properties
+
+- Essential Properties
+- Collateral Properties
+
+---
+
+# Nella realtà: Generators
+
+Esempio su prodotto alimentare
+
+---
+
+
+
 
 # Generatori
 
@@ -534,7 +699,8 @@ Generator :: Random -> Size -> data
 
 # Caso reale di uso di generatori
 
-```csharp {all|7,9}
+````md magic-move {lines: true}
+```csharp {all|7,9|all}
 record Product(Guid Id, string Name, decimal Price, Category category);
 
 Gen<Product> products =
@@ -545,6 +711,47 @@ Gen<Product> products =
 	
     select new Product(Id: id, Name: name, Price: price, Category: category);
 ```
+
+```csharp
+record Product(Guid Id, string Name, decimal Price, Category category);
+
+[Property]
+Property some_property_about_products()
+{
+    Gen<Product> products =
+        from id in Arb.Generate<Guid>()
+        from name in Arb.Generate<string>()
+        from price in Arb.Generate<decimal>()
+        from category in Arb.Generate<Category>()
+    	
+        select new Product(Id: id, Name: name, Price: price, Category: category);
+        
+    return ForAll(products.ToArbitrary(), product => 
+        somePropertyOf(product));
+}
+```
+
+
+```csharp
+record Product(Guid Id, string Name, decimal Price, Category category);
+
+[Property]
+bool some_property_about_products(Product product)
+{
+    return somePropertyOf(product));
+}
+```
+
+
+```csharp
+record Product(Guid Id, string Name, decimal Price, Category category);
+
+[Property]
+bool some_property_about_products(Product product) =>
+    somePropertyOf(product));
+```
+
+````
 
 ---
 
