@@ -932,13 +932,19 @@ int Add(int a, int b) =>
 
 # Property: strategie
 
-- Different paths, same destination
-- There and back again
-- Some things never change
-- The more things change, the more they stay the same
-- Solve a smaller problem first
-- Hard to prove, easy to verify
-- The test oracle
+- Essential Properties
+- Collateral Properties
+  - Different paths, same destination
+  - There and back again
+  - Some things never change
+  - The more things change, the more they stay the same
+  - Solve a smaller problem first
+  - Hard to prove, easy to verify
+  - The test oracle
+
+## References
+
+- [Choosing properties for property-based testing](https://fsharpforfunandprofit.com/posts/property-based-testing-2/#different-paths)
 
 ---
 
