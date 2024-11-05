@@ -833,5 +833,151 @@ bool square_of_numbers_are_non_negative(int n) =>
 transition: slide-left
 ---
 
-# Fine
 
+# Property
+
+```csharp
+[Property]
+void calcutates_the_sum_of_2_numbers(int a, int b)
+{
+    var sum = Add(a, b);
+
+}
+```
+
+<br/>
+
+```csharp
+int Add(int a, int b) =>
+    a + b;
+```
+
+---
+
+# Property: strategie
+
+- Different paths, same destination
+- There and back again
+- Some things never change
+- The more things change, the more they stay the same
+- Solve a smaller problem first
+- Hard to prove, easy to verify
+- The test oracle
+
+---
+
+# Property: strategie - Different paths, same destination
+
+<br/>
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+        <img src="./img/property_commutative.png" >
+</div>
+
+<br/><br/>
+
+<div style="font-color: red; text-align: center; font-size: 2em;" v-click>
+    Proprietà commutativa
+</div>
+
+---
+
+# Property: strategie - There and back again
+
+<br/>
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+        <img src="./img/property_inverse.png" >
+</div>
+
+
+<br/><br/>
+
+<div style="font-color: red; text-align: center; font-size: 2em;" v-click>
+    Inverso / Isomorfismo
+</div>
+
+
+---
+
+# Property: strategie - Some things never change
+
+<br/>
+
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+    <img src="./img/property_invariant.png" >
+</div>
+
+
+<br/><br/>
+
+<div style="font-color: red; text-align: center; font-size: 2em;" v-click>
+    Invarianza
+</div>
+
+
+---
+
+# Property: strategie - The more things change, the more they stay the same
+
+<br/>
+
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+    <img src="./img/property_idempotence.png" >
+</div>
+
+
+
+<br/><br/>
+
+<div style="font-color: red; text-align: center; font-size: 2em;" v-click>
+    Idempotenza
+</div>
+
+
+---
+
+# Property: strategie - Solve a smaller problem first
+
+<br/>
+
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+    <img src="./img/property_induction.png" >
+</div>
+
+
+<br/><br/>
+
+<div style="font-color: red; text-align: center; font-size: 2em;" v-click>
+    Induzione
+</div>
+
+
+---
+
+# Property: strategie - Hard to prove, easy to verify
+
+<br/>
+
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+    <img src="./img/property_easy_verification.png" >
+</div>
+
+
+---
+
+# Property: strategie - The test oracle
+
+<br/>
+
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+    <img src="./img/property_test_oracle.png" >
+</div>
+
+
+---
