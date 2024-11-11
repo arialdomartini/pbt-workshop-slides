@@ -1059,6 +1059,9 @@ bool rev_rev(List<int> xs) =>
 
 - [Choosing properties for property-based testing](https://fsharpforfunandprofit.com/posts/property-based-testing-2/#different-paths)
 
+
+---
+transition: none
 ---
 
 # Property: strategie - Different paths, same destination
@@ -1071,10 +1074,35 @@ bool rev_rev(List<int> xs) =>
 
 <br/><br/>
 
-<div style="font-color: red; text-align: center; font-size: 2em;" v-click>
-    Proprietà commutativa
+<div style="text-align: center; font-size: 2em;" v-click>
+    Proprietà commutativa<br/>
+    (Category Theory: commutative diagram)
 </div>
 
+---
+transition: none
+---
+
+# Property: strategie - Different paths, same destination
+
+<br/>
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+        <img src="./img/property_commutative.png" >
+</div>
+
+<br/><br/>
+
+```csharp
+[Property]
+bool product(int n, int a, int b) =>
+    n.Times(a).Times(b) == n.Times(b).Times(a);
+```
+
+
+
+---
+transition: none
 ---
 
 # Property: strategie - There and back again
@@ -1088,11 +1116,62 @@ bool rev_rev(List<int> xs) =>
 
 <br/><br/>
 
-<div style="font-color: red; text-align: center; font-size: 2em;" v-click>
+<div style="text-align: center; font-size: 2em;" v-click>
     Inverso / Isomorfismo
 </div>
 
+---
 
+
+# Property: strategie - There and back again
+
+<br/>
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+        <img src="./img/property_inverse.png" >
+</div>
+
+
+<br/>
+
+````md magic-move {lines: true}
+```csharp
+[Property]
+bool serialization(Product product) {
+    var json = Json.Serialize(product);
+    var obj = Json.Deserialize<Product>(json);
+    
+    return obj == product;
+}
+```
+
+```csharp
+[Property]
+bool serialization(Product product) =>
+    product.Serialize().Deserialize() == product;
+```
+
+```csharp
+[Property]
+bool all_products_can_be_persisted(Product product)
+{
+    _repository.Save(product);
+
+    var found = _repository.LoadById(product.Id);
+
+    return found == product;
+}
+```
+
+```csharp
+[Property]
+bool all_products_can_be_persisted(Product product) =>
+    _repository.LoadById(_repository.Save(product)) == product;
+```
+````
+
+---
+transition: none
 ---
 
 # Property: strategie - Some things never change
@@ -1105,10 +1184,69 @@ bool rev_rev(List<int> xs) =>
 </div>
 
 
-<br/><br/>
+<br/>
 
-<div style="font-color: red; text-align: center; font-size: 2em;" v-click>
+<div style="text-align: center; font-size: 2em;" v-click>
     Invarianza
+</div>
+
+---
+
+
+# Property: strategie - Some things never change
+
+<br/>
+
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+    <img src="./img/property_invariant.png" >
+</div>
+
+
+<br/>
+
+````md magic-move {lines: true}
+```csharp
+[Property]
+bool sort_preserves_elements(List<int> xs) =>
+    xs.Sort().Length == xs.Length;
+```
+
+```csharp
+[Property]
+bool preserves_amount_of_money(List<Product> products, Budget budget) {
+    var cart = new Cart();
+    
+    var before = cart.Total + budget;
+    
+    products.ForEach(product => cart.Add(product));
+    cart.Checkout(budget);
+    
+    var after = cart.Total + budget;
+    
+    return after == before;
+}
+
+```
+````
+
+---
+transition: none
+---
+
+# Property: strategie - The more things change, the more they stay the same
+
+<br/>
+
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+    <img src="./img/property_idempotence.png" >
+</div>
+
+<br/>
+
+<div style="text-align: center; font-size: 2em;" v-click>
+    Idempotenza
 </div>
 
 
@@ -1124,13 +1262,22 @@ bool rev_rev(List<int> xs) =>
 </div>
 
 
+<br/>
 
-<br/><br/>
+```csharp
+[Property]
+bool report_generation(List<Transaction> transactions)
+{
+    GenerateReports(transactions);
+    var filesBefore = ReadReports();
+    
+    GenerateReports(transactions);
+    var filesAfterSecondRun = ReadReports();
 
-<div style="font-color: red; text-align: center; font-size: 2em;" v-click>
-    Idempotenza
-</div>
-
+    return files == filesAfterSecondRun;
+    
+}
+```
 
 ---
 
@@ -1146,7 +1293,7 @@ bool rev_rev(List<int> xs) =>
 
 <br/><br/>
 
-<div style="font-color: red; text-align: center; font-size: 2em;" v-click>
+<div style="text-align: center; font-size: 2em;" v-click>
     Induzione
 </div>
 
@@ -1184,7 +1331,8 @@ bool rev_rev(List<int> xs) =>
 void calcutates_the_sum_of_2_numbers(int a, int b)
 {
     var sum = Add(a, b);
-
+    
+    return ???
 }
 ```
 
