@@ -27,9 +27,58 @@ lineNumbers: true
 
 Un workshop introduttivo a Property-Based Testing
 
+
+---
+
+
+# Agenda
+
+<div style="zoom:.75;">
+
+> **Teoria** (ma con codice)
+>  * Example Based vs Property Based
+>  * Esempi di codice (in C#)
+
+<br/>
+
+> **Pratica: Limiti di TDD**
+>  * Il Kata sui fattori primi di Robert Martin
+>    * In TDD by the book
+>    * In PBT
+
+<br/>
+
+
+> **Teoria**
+>  * Theory, Fixture, auto-fixture, generatori, shrinker
+>    * Generatori (a manella)
+>    * Anatomia di un property test
+>    * Catturare proprietà
+>    * Enterprise Developer from Hell di Scott Wlaschin
+
+<br/>
+
+> **Pratica: Design Emergente**
+>  * Il Print Diamond Kata
+
+<br/>
+
+> **Pratica: caso reale**
+>  * Supermarket Kata di Ferdinando Santacroce
+
+</div>
+
+---
+layout: section
+---
+
+# TDD != Requisiti come codice
+
 ---
 
 # Slide di KP
+
+qui
 
 ---
 
@@ -67,7 +116,7 @@ Un workshop introduttivo a Property-Based Testing
 
 ### Esempio concreto
 > Per esempio, non si possono avere 2 `john.doe`<br/>
-> Inoltre, `john.doe` e `John.Doe` sono lo stesso account.
+> Inoltre, `john.doe` e `JOHN.DOE` sono lo stesso account.
 
 </div>
 
@@ -86,14 +135,21 @@ Un workshop introduttivo a Property-Based Testing
 ### Esempio concreto
 > Supponiamo che un cliente acquisti 2 tazze di caffè, 1 latte e 1
 muffin per 4 persone.<br/>
-> 4 persone hanno diritto alla Promozione 1, sconto del 20%, 1
+> 4 persone hanno diritto alla Promozione "Famiglia", sconto del 20%, 1
 EUR.<br/>
-> Latte e Muffin attivano la Promozione 2, 0,8 EUR.<br/>
->In questo caso, applichiamo la Promozione 1, perché è la più conveniente
+> Latte e Muffin attivano la Promozione "Colazione", 0.8 EUR.<br/>
+>In questo caso, applichiamo la Promozione "Famiglia", perché è la più conveniente
 
 </div>
 
 ---
+layout: section
+---
+
+# Esempi di traduzione da Example-Based a Property-Based
+
+---
+
 
 # Un Property Test di esempio: repository
 
@@ -221,7 +277,7 @@ Property all_the_multiples_of_15_return_fizzbuzz()
 
 > Gli account name sono unici e case insensitive.<br/>
 > Per esempio, non si possono avere 2 `john.doe`.<br/>
-> Inoltre, `john.doe` e `John.Doe` sono lo stesso account.<br/>
+> Inoltre, `john.doe` e `JOHN.DOE` sono lo stesso account.<br/>
 
 <br/>
 
@@ -350,6 +406,12 @@ Property the_catalog_always_lists_products_in_alphabetical_order() =>
 * Difficile.
 * Capire cosa sia una proprietà a volte non è banale.
 * Una nicchia di una nicchia.
+
+---
+layout: section
+---
+
+# Cos'è una proprietà?
 
 ---
 
@@ -712,8 +774,6 @@ Non compone!
 
 ---
 
-
-
 # Nella realtà
 
 - Type-Driven Design
@@ -761,6 +821,13 @@ void no_discounts_is_applied_to_carts_without_food(
 
 - Essential Properties
 - Collateral Properties
+
+
+---
+layout: section
+---
+
+# Proprietà, in concreto
 
 ---
 
@@ -845,7 +912,15 @@ bool some_property_about_products(Product product) =>
 
 ````
 
+
 ---
+layout: section
+---
+
+# Scrivere property test
+
+---
+
 
 # Anatomia di un property test
 
@@ -917,7 +992,7 @@ transition: slide-left
 void calcutates_the_sum_of_2_numbers(int a, int b)
 {
     var sum = Add(a, b);
-
+    ???
 }
 ```
 
@@ -927,6 +1002,44 @@ void calcutates_the_sum_of_2_numbers(int a, int b)
 int Add(int a, int b) =>
     a + b;
 ```
+
+---
+layout: section
+---
+
+# Individuare le proprietà
+
+---
+
+# Essential Property e Collateral Property
+
+### Essential
+
+```csharp
+[Property]
+Property all_the_multiples_of_15_return_fizzbuzz()
+{
+    var multiplesOf15 = Arb.From( 
+        Arb.Generate<int>()
+            .Select(i => i * 15));
+
+    return Prop.ForAll(multiplesOf15, n => 
+        fizzbuzz(n) == "fizzbuzz");
+}
+```
+
+<br/>
+
+### Collateral
+
+```csharp
+[Property]
+bool rev_rev(List<int> xs) =>
+    Reverse(Reverse(xs)).SequenceEqual(xs);
+```
+
+
+
 
 ---
 
