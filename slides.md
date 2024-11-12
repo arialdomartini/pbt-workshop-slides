@@ -1280,6 +1280,8 @@ bool report_generation(List<Transaction> transactions)
 ```
 
 ---
+transition: none
+---
 
 # Property: strategie - Solve a smaller problem first
 
@@ -1291,7 +1293,7 @@ bool report_generation(List<Transaction> transactions)
 </div>
 
 
-<br/><br/>
+<br/>
 
 <div style="text-align: center; font-size: 2em;" v-click>
     Induzione
@@ -1300,27 +1302,93 @@ bool report_generation(List<Transaction> transactions)
 
 ---
 
-# Property: strategie - Hard to prove, easy to verify
+# Property: strategie - Solve a smaller problem first
 
 <br/>
 
 
 <div style="margin-left:auto; margin-right: auto; width:50%">
-    <img src="./img/property_easy_verification.png" >
+    <img src="./img/property_induction.png" >
 </div>
+
+
+<br/>
+
+```csharp
+[Property]
+bool n_apples_cost_n_times_50(PositiveInt n)
+{
+    int BuyTimes(int n) {
+        var cart = new CheckoutSystem();
+        Enumerable.Range(1, n).ForEach(_ => cart.Scan("apple"));
+        var total = cart.Checkout();
+        return total;
+    }
+    
+    return BuyTimes(n + 1) == BuyTims(n) + 50;
+}
+```
 
 
 ---
 
+# Property: strategie - Hard to prove, easy to verify
+
+
+
+<div style="margin-left:auto; margin-right: auto; width:40%">
+    <img src="./img/property_easy_verification.png" >
+</div>
+
+
+<div v-click>
+```csharp
+[Property]
+Property works_with_tls()
+{
+    var certificates =
+        from certificate in GenerateCertificate("my-domain")
+        select certificate;
+    
+    return ForAll(certificates.ToArbitrary()), certificate => {
+        InstallCertificate(certificate, "my-domain");
+    
+        var httpResponse = Get("https://my-domain");
+    
+        return httpResponse.StatusCode == OK;
+    }
+}
+```
+
+</div>
+---
+
 # Property: strategie - The test oracle
 
-<br/>
-
-
-<div style="margin-left:auto; margin-right: auto; width:50%">
+<div style="margin-left:auto; margin-right: auto; width:30%">
     <img src="./img/property_test_oracle.png" >
 </div>
 
+
+<div v-click>
+```csharp
+[Property]
+bool login_logout(List<Operation> operations)
+{
+    foreach(var operation in operations)
+    {
+        _system.Do(operation);
+        match operation with {
+            Login  -> _model.LogIn();
+            Logout -> _model.LogOut();
+            Reset  -> _model.LogOut();
+        }
+    }
+
+    return _system.IsAuthenticated == _model.IsAuthenticated;
+}
+```
+</div>
 
 ---
 
