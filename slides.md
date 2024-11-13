@@ -69,6 +69,35 @@ Un workshop introduttivo a Property-Based Testing
 </div>
 
 ---
+layout: two-cols-header
+---
+
+# Takeaway
+
+::left::
+
+## Teoria
+
+<v-clicks>
+
+- `[Fact]` + `[Theory]` > `[Fact]`
+- Non servono librerie
+
+</v-clicks>
+
+::right::
+
+## Coding sessions
+
+<v-clicks>
+
+- **Prime Factors Kata**<br/> completezza, affidabilità, production readiness
+- **Print Diamond Kata**<br/> design emergente, sviluppo incrementale
+- **Supermarket Kata**<br/> cogliere l'essenza dei requisiti
+
+</v-clicks>
+
+---
 layout: section
 ---
 
@@ -448,6 +477,152 @@ C'è un bug?
 </v-clicks>
 
 ---
+layout: section
+---
+
+# Coding Session<br/>Prime Factors Kata
+
+---
+layout: two-cols-header
+---
+
+# Prime Factors Kata - Osservazioni
+
+Quale approccio cattura meglio il requisito?
+
+::left::
+
+<div style="margin-right:.5em;">
+```csharp
+[Theory]
+void factors()
+{
+    Assert.Equal([],        FactorsOf(1));
+    Assert.Equal([2],       FactorsOf(2));
+    Assert.Equal([3],       FactorsOf(3));
+    Assert.Equal([2, 2],    FactorsOf(4));
+    Assert.Equal([5],       FactorsOf(5));
+    Assert.Equal([2, 3],    FactorsOf(6));
+    Assert.Equal([7],       FactorsOf(7));
+    Assert.Equal([2, 2, 2], FactorsOf(8));
+    Assert.Equal([3, 3],    FactorsOf(9));
+}
+```
+</div>
+
+::right::
+
+<div style="margin-left:.5em;">
+```csharp
+[Property]
+bool boolean_factorization_in_prime_numbers(PositiveInt n)
+{
+    var factors = FactorsOf(n.Item);
+
+    return
+        factors.All(IsPrime) && 
+        factors.Multiplied() == n;
+}
+```
+</div>
+
+---
+
+# Prime Factors Kata - Osservazioni
+
+<v-clicks>
+
+- Sviluppo incrementale del codice e del test.
+- Quale il più economico? (casi 6, 7, 8)
+- PBT ha guidato lo sviluppo? Ruolo dello shrinker
+- Fake it until you make it
+- Quando i test sono abbastanza test?
+- Il design è stato emergente?
+- Test verde == rilascio in produzione?
+
+</v-clicks>
+
+---
+layout: two-cols-header
+---
+
+# Dal punto di vista della Production Readiness
+
+::left::
+
+<div style="margin-left:auto; margin-right: auto; width:75%">
+    <figure>
+        <img src="./img/incremental-reality.png" >
+        <figcaption><center>La realtà</center></figcaption>
+    </figure>
+</div>
+
+::right::
+
+<div v-click style="margin-left:auto; margin-right: auto; width:75%">
+    <figure>
+        <img src="./img/incremental-example-based.png" >
+        <figcaption><center>Il feedback che abbiamo avuto da TDD</center></figcaption>
+    </figure>
+</div>
+
+---
+
+# Prime Factors Kata - codice bacato
+
+
+<div style="zoom: 60%;">
+```csharp
+private static List<int> FactorsOf(int n)
+{
+    var remainder = n;
+    var factors = new List<int>();
+
+    if (remainder > 1)
+    {
+        if (remainder % 2 == 0)
+        {
+            factors.Add(2);
+            remainder /= 2;
+        }
+    }
+        
+    if(remainder > 1)
+        factors.Add(remainder);
+        
+    return factors;
+}
+```
+</div>
+
+<br/>
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+        <img src="./img/prime-factors-bugged-code.jpg" >
+</div>
+
+---
+
+# Collateral property
+
+
+- `factorize(prime) -> [prime]`
+- `factorize(prime^2) -> [prime, prime]`
+- `factorize(prime^n) -> [prime, ..., prime]`
+- `factorize(prime1 * prime2) -> [prime1, prime2]`
+- `factorize(prime1 * .... * primeN) -> [prime1, ..., primeN]`
+- `factorize(n < 2) -> IllegalArgumentException`
+- `factorize(2 <= number <= Integer.MAX_VALUE) -> no exception  `
+- `product of all returned numbers must be equal to input number`
+- `all numbers in produced list must be primes`
+
+---
+layout: section
+---
+
+# Fixtures, Properties<br/>Generators, Shrinkers
+
+---
 
 # Fixture
 
@@ -480,10 +655,13 @@ void calcutates_the_sum_of_2_numbers(int a, int b, int expectedSum)
 
 ---
 
+
 # Auto-Fixture con regole di dominio
 
+
 ```csharp
-[Property]
+[Theory]
+[AutoData]
 void any_product_classified_as_food_is_discountable([Food] Product product)
 {
     Assert.True(_catalog.CanBeDiscounted(product));
@@ -492,31 +670,36 @@ void any_product_classified_as_food_is_discountable([Food] Product product)
 
 ---
 
-# Shrinking: Controesempi
+# Fixture: non possono usare tipi non primitivi
 
-> I get the general rule. But, hey! I found a counterexample!<br/>
-> Here it is:
-> 
-> ```csharp
->   new Product(
->     Name: _,
->     Category: Categories.SoftDrinks,
->     Price: _,
->     Description: _)}
-> ```
-> 
-> Don't even care about `name`, `price` and other fields: the element 
-> causing the problem is 
->
-> ```csharp
->   category = Categories.SoftDrinks
-> ```
->   
-> Apparently, the production code is not considering soft drinks as a food.<br/>
-> Either this is a bug, or your specification is incomplete.
+> Food products can be discounted
 
+```csharp
+[Theory]
+[InlineData(
+    new Product(
+        name: "Apple",
+        category: Categories.Fruits,
+        price: 0.90,
+        description: "Delicious Fuji apple"))
+[InlineData(
+    new Product(
+        name: "'Nduja",
+        category:
+        Categories.Sausages,
+        price: 9.50,
+        description: "Spicy. Original from Calabria"))
+        
+void discountable_products(Product product)
+{
+    var discountIsApplyed = _catalog.CanBeDiscounted(product);
+    
+    Assert.True(discountIsApplyed);
+}
+```
 
 ---
+
 
 # Proprietà: non solo una questione di auto-fixture
 
@@ -547,6 +730,7 @@ void calcutates_the_sum_of_2_numbers(int a, int b)
 }
 ```
 
+
 ---
 
 # Scelte deboli
@@ -570,7 +754,29 @@ int Add(int a, int b) =>
     a + b;
 ```
 
+<br/>
+
+<div v-click>
+```csharp
+[Fact]
+void calcutates_the_sum_of_2_numbers()
+{
+    var sum = Add(2, 3);
+    
+    Assert.Equal(5, sum);
+}
+```
+</div>
+
+
 ---
+layout: section
+---
+
+# Non abbiamo mai capito le Theory
+
+---
+
 
 # Fixture: Theory?
 
@@ -632,9 +838,6 @@ transition: none
 
 
 ---
-transition: slide-left
----
-
 
 # Fixture: Theory!
 
@@ -650,40 +853,12 @@ transition: slide-left
 * [Theories in practice: Easy-to-write specifications that catch bugs](https://homes.cs.washington.edu/~mernst/pubs/testing-theories-tr002-abstract.html)
 
 ---
-transition: slide-left
+layout: section
 ---
 
-
-# Fixture: non possono usare tipi non primitivi
-
-> Food products can be discounted
-
-```csharp
-[Theory]
-[InlineData(
-    new Product(
-        name: "Apple",
-        category: Categories.Fruits,
-        price: 0.90,
-        description: "Delicious Fuji apple"))
-[InlineData(
-    new Product(
-        name: "'Nduja",
-        category:
-        Categories.Sausages,
-        price: 9.50,
-        description: "Spicy. Original from Calabria"))
-        
-void discountable_products(Product product)
-{
-    var discountIsApplyed = _catalog.CanBeDiscounted(product);
-    
-    Assert.True(discountIsApplyed);
-}
-```
+# Idealmente
 
 ---
-
 
 # Idealmente: attributi magici
 
@@ -717,6 +892,47 @@ void no_discounts_is_applied_to_carts_without_food(
     Assert.Equal(plainSumOfPrices, total)
 }
 ```
+
+---
+
+# Idealmente: Controesempi con Shrinking
+
+
+````md magic-move {lines: true}
+```csharp
+I found a counterexample!
+Here it is:
+
+
+  new Product(
+    Name: "\0.",
+    Category: Categories.SoftDrinks,
+    Price: 192722,
+    Description: "11111111A\0")}
+```
+
+```csharp
+I get the general rule. But, hey! I found a counterexample!
+Here it is:
+
+  new Product(
+    Name: _,
+    Category: Categories.SoftDrinks,
+    Price: _,
+    Description: _)}
+
+
+Don't even care about `name`, `price` and other fields: the element 
+causing the problem is 
+
+   category = Categories.SoftDrinks
+
+
+Apparently, the production code is not considering soft drinks as a food.<br/>
+Either this is a bug, or your specification is incomplete.
+```
+````
+
 
 ---
 
@@ -763,8 +979,6 @@ void account_name_is_unique()
 
 # Funzioni ad-hoc: non compongono
 
-
-Non compone!
 
 ```csharp
     Account[] existingAccountsIncludingDisabledOnes = 
@@ -817,17 +1031,27 @@ void no_discounts_is_applied_to_carts_without_food(
 ---
 
 
-# Nella realtà: Properties
+# Nella realtà: Generators
 
-- Essential Properties
-- Collateral Properties
+```csharp
+    Account[] existingAccountsIncludingDisabledOnes = 
+        GenerateAllDifferent()
+            .ComposedWith(HavingAtLeast3DisabledAccounts());
+```
 
+<br/>
 
----
-layout: section
----
+<div v-click>
 
-# Proprietà, in concreto
+```csharp
+    Gen<Account[]> existingAccountsIncludingDisabledOnes = 
+        from accounts in Gen.ListOf(GenAccount)
+        let distinct = accounts.Distinct()
+        where distinct.Count(a => a.IsDisabled) >= 3
+        select distinct;
+```
+
+</div>
 
 ---
 
@@ -1039,11 +1263,19 @@ bool rev_rev(List<int> xs) =>
 ```
 
 
+---
 
+# Essential Property
+
+### È un approccio mentale, non una libreria
+
+* Theory (senza `expectedResult`) invece di Fact
+* Input non noti
+* 
 
 ---
 
-# Property: strategie
+# property: strategie
 
 - Essential Properties
 - Collateral Properties
@@ -1390,6 +1622,54 @@ bool login_logout(List<Operation> operations)
 ```
 </div>
 
+
+---
+layout: section
+---
+
+# Coding Session<br/>Design Emergente
+
+## Con Print Diamond Kata
+
+---
+
+# Sviluppo incrementale
+
+<br/>
+<br/>
+
+<div style="margin-left:auto; margin-right: auto; width:50%">
+    <img src="./img/agile-car.png" >
+</div>
+
+
+---
+layout: two-cols-header
+---
+
+# Considerazioni
+
+::left::
+
+<div style="margin-left:auto; margin-right: auto; width:75%">
+    <figure>
+        <img src="./img/tdd.png" >
+        <figcaption><center>Property-Based Development - (Example)TDD</center></figcaption>
+    </figure>
+</div>
+
+
+::right::
+
+<div style="margin-left:auto; margin-right: auto; width:75%">
+    <figure>
+        <img src="./img/pbd.png" >
+        <figcaption><center>Property-Based Development</center></figcaption>
+    </figure>
+</div>
+
+
+
 ---
 
 # Property: la somma
@@ -1421,4 +1701,8 @@ int Add(int a, int b) =>
 </div>
 
 ---
+layout: section
+---
 
+# Coding session<br/>Supermarket Kata
+## di Ferdinando Santacroce
