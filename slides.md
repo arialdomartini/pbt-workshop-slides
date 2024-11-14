@@ -42,7 +42,7 @@ Un workshop introduttivo a Property-Based Testing
 <br/>
 
 > **Pratica: Limiti di TDD**
->  * Il Kata sui fattori primi di Robert Martin
+>  * Il Prime Factor Kata di Robert Martin
 >    * In TDD by the book
 >    * In PBT
 
@@ -1269,11 +1269,149 @@ bool rev_rev(List<int> xs) =>
 
 ### È un approccio mentale, non una libreria
 
-* Theory (senza `expectedResult`) invece di Fact
-* Input non noti
-* 
+
+| Strategia                                              | Effetto                                             |
+|--------------------------------------------------------|-----------------------------------------------------|
+| `[Theory]` (senza `expectedResult`) invece di `[Fact]` | Non si può fare affidamenteo sul valore atteso      |
+| Conceiling Methods                                     | Non si mostrano i valori di ingresso                |
+| Random Values Factories                                | Non si può fare affidamenteo sui valori di ingresso |
+
 
 ---
+
+# Theory senza expectedResult
+
+
+<div style="zoom:75%">
+
+````md magic-move {lines: true}
+```csharp
+[Theory]
+[InlineData("1.0", "1.5", ".8", "1.0")]
+[InlineData("1.0", "1.5", "1.0", "1.0")]
+[InlineData("1.0", "1.5", "1.2.5", "1.2.5")]
+[InlineData("1.0", "1.5", "1.5", "1.5")]
+[InlineData("1.0", "1.5", "1.9", "1.5")]
+[InlineData("1.0", "1.1", "1.0.5", "1.0.5")]
+[InlineData("1.0", "1.1", "", "1.0")]
+public void ProtocolResolvesCorrectly(string minProtocol, string maxProtocol, string clientProtocol, string expectedProtocol)
+{
+    var request = new Mock<IRequest>();
+    var queryStrings = new NameValueCollection();
+    var minProtocolVersion = new Version(minProtocol);
+    var maxProtocolVersion = new Version(maxProtocol);
+    var protocolResolver = new ProtocolResolver(minProtocolVersion, maxProtocolVersion);
+
+    queryStrings.Add("clientProtocol", clientProtocol);
+
+    request.Setup(r => r.QueryString).Returns(new NameValueCollectionWrapper(queryStrings));
+
+    var version = protocolResolver.Resolve(request.Object);
+
+    Assert.Equal(version, new Version(expectedProtocol));
+}
+```
+
+
+```csharp
+[Theory]
+[InlineData("1.0", "1.5", ".8")]
+[InlineData("1.0", "1.1", "")]
+public void default_to_minimum_protocol_if_client_is_out_of_date_or_unspecified(string minProtocol, string maxProtocol, string clientProtocol)
+{
+    var request = new Mock<IRequest>();
+    var queryStrings = new NameValueCollection();
+    var minProtocolVersion = new Version(minProtocol);
+    var maxProtocolVersion = new Version(maxProtocol);
+    var protocolResolver = new ProtocolResolver(minProtocolVersion, maxProtocolVersion);
+
+    queryStrings.Add("clientProtocol", clientProtocol);
+
+    request.Setup(r => r.QueryString).Returns(new NameValueCollectionWrapper(queryStrings));
+
+    var version = protocolResolver.Resolve(request.Object);
+
+    Assert.Equal(version, new Version(minProtocol));
+}
+```
+
+```csharp
+
+[Theory]
+[InlineData("1.0", "1.5", "1.0")]
+[InlineData("1.0", "1.5", "1.2.5")]
+[InlineData("1.0", "1.5", "1.5")]
+[InlineData("1.0", "1.1", "1.0.5")]
+public void prefer_client_protocol_if_compatible(string minProtocol, string maxProtocol, string clientProtocol)
+{
+    var request = new Mock<IRequest>();
+    var queryStrings = new NameValueCollection();
+    var minProtocolVersion = new Version(minProtocol);
+    var maxProtocolVersion = new Version(maxProtocol);
+    var protocolResolver = new ProtocolResolver(minProtocolVersion, maxProtocolVersion);
+
+    queryStrings.Add("clientProtocol", clientProtocol);
+
+    request.Setup(r => r.QueryString).Returns(new NameValueCollectionWrapper(queryStrings));
+
+    var version = protocolResolver.Resolve(request.Object);
+
+    Assert.Equal(version, new Version(clientProtocol));
+}
+```
+
+
+```csharp
+[Theory]
+[InlineData("1.0", "1.5", "1.9", "1.5")]
+public void never_use_a_protocol_beyond_maximum(string minProtocol, string maxProtocol, string clientProtocol)
+{
+    var request = new Mock<IRequest>();
+    var queryStrings = new NameValueCollection();
+    var minProtocolVersion = new Version(minProtocol);
+    var maxProtocolVersion = new Version(maxProtocol);
+    var protocolResolver = new ProtocolResolver(minProtocolVersion, maxProtocolVersion);
+
+    queryStrings.Add("clientProtocol", clientProtocol);
+
+    request.Setup(r => r.QueryString).Returns(new NameValueCollectionWrapper(queryStrings));
+
+    var version = protocolResolver.Resolve(request.Object);
+
+    Assert.Equal(version, new Version(maxProtocol));
+}
+```
+````
+
+</div>
+
+
+<arrow v-click="[1,2]" x1="400" y1="420" x2="325" y2="355" color="#953" width="2" arrowSize="1" style="z-index: 9999;"/>
+<arrow v-click="[2,3]" x1="400" y1="440" x2="345" y2="375" color="#953" width="2" arrowSize="1" style="z-index: 9999;"/>
+<arrow v-click="[3,4]" x1="400" y1="400" x2="325" y2="345" color="#953" width="2" arrowSize="1" style="z-index: 9999;"/>
+
+
+<div v-click="4">
+https://github.com/emadb/SignalR/blob/fd165078396d00c8ac3f5845445794d2605a8fdd/tests/Microsoft.AspNet.SignalR.Tests/Server/ProtocolResolverFacts.cs#L13
+</div>
+
+---
+
+# Conceiling Methods
+
+
+```csharp
+
+```
+
+---
+
+# Random Values Factories
+
+```csharp
+
+```
+
 
 # property: strategie
 
