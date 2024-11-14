@@ -1399,19 +1399,66 @@ https://github.com/emadb/SignalR/blob/fd165078396d00c8ac3f5845445794d2605a8fdd/t
 
 # Conceiling Methods
 
-
+````md magic-move {lines: true}
 ```csharp
+[Fact]
+public void GetTotal_SameItemTwice_ShouldReturnTheSum()
+{
+    _priceListService.Setup(p => p
+        .GetCurrentPriceFor(99))
+        .Returns(100m);
+            
+    _cart.AddItem(99);
+    _cart.AddItem(99);
 
+    Assert.Equal(200m, _cart.Total);
+}
 ```
 
+```csharp
+[Fact]
+public void GetTotal_SameItemTwice_ShouldReturnTheSum()
+{
+    var someProduct = SomeProduct();
+    _priceListService.Setup(p => p
+        .GetCurrentPriceFor(someProducts.Id))
+        .Returns(someProducts.Price);
+            
+    _cart.AddItem(someProduct.Id);
+    _cart.AddItem(someProduct.Id);
+
+    Assert.Equal(2 * someProduct.Price, _cart.Total);
+}
+```
+````
+
+<div v-click="2">
+https://github.com/emadb/TddSerie/tree/master/src/CodicePlastico.TddSerie.Core.Tests
+</div>
 ---
 
 # Random Values Factories
 
 ```csharp
 
+```csharp
+[Fact]
+public void GetTotal_SameItemNTimes_ShouldReturnTheSum()
+{
+    var (someProduct, quantity) = SomeProduct();
+    _priceListService.Setup(p => p
+        .GetCurrentPriceFor(someProducts.Id))
+        .Returns(someProducts.Price);
+            
+    Enumerable.Range(1, quantity).ForEach(_ =>            
+        _cart.AddItem(someProduct.Id););
+
+    Assert.Equal(quantity * someProduct.Price, _cart.Total);
+}
+```
 ```
 
+---
 
 # property: strategie
 
