@@ -1471,6 +1471,21 @@ public void GetTotal_SameItemNTimes_ShouldReturnTheSum()
     Assert.Equal(quantity * someProduct.Price, _cart.Total);
 }
 ```
+
+```csharp
+[Property]
+public bool GetTotal_SameItemNTimes_ShouldReturnTheSum(Product product, int quantity)
+{
+    _priceListService.Setup(p => p
+        .GetCurrentPriceFor(someProducts.Id))
+        .Returns(someProducts.Price);
+            
+    Enumerable.Range(1, quantity).ForEach(_ =>            
+        _cart.AddItem(someProduct.Id););
+
+    return _cart.Total == quantity * someProduct.Price;
+}
+```
 ````
 ---
 
