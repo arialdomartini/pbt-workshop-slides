@@ -1439,7 +1439,22 @@ https://github.com/emadb/TddSerie/tree/master/src/CodicePlastico.TddSerie.Core.T
 
 # Random Values Factories
 
+````md magic-move {lines: true}
 ```csharp
+[Fact]
+public void GetTotal_SameItemTwice_ShouldReturnTheSum()
+{
+    var someProduct = SomeProduct();
+    _priceListService.Setup(p => p
+        .GetCurrentPriceFor(someProducts.Id))
+        .Returns(someProducts.Price);
+            
+    _cart.AddItem(someProduct.Id);
+    _cart.AddItem(someProduct.Id);
+
+    Assert.Equal(2 * someProduct.Price, _cart.Total);
+}
+```
 
 ```csharp
 [Fact]
@@ -1456,8 +1471,7 @@ public void GetTotal_SameItemNTimes_ShouldReturnTheSum()
     Assert.Equal(quantity * someProduct.Price, _cart.Total);
 }
 ```
-```
-
+````
 ---
 
 # property: strategie
