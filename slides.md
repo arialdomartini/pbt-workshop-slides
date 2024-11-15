@@ -69,6 +69,56 @@ Un workshop introduttivo a Property-Based Testing
 </div>
 
 ---
+layout: section
+---
+
+# Takeaway
+
+---
+
+# Testi verdi -> pronti per il deploy?
+
+<div style="margin-left:auto; margin-right: auto; width:75%">
+    <figure>
+        <img src="./img/all-green-tests.png" >
+        <figcaption><center>Production Ready?</center></figcaption>
+    </figure>
+</div>
+
+---
+
+# Test == requisiti
+
+
+```csharp
+[Fact]
+void sum()
+{
+    Assert.Equal(5, Sum(2, 3));
+}
+```
+
+<br/>
+
+```csharp
+[Fact]
+void factors()
+{
+    Assert.Equal([],        FactorsOf(1));
+    Assert.Equal([2],       FactorsOf(2));
+    Assert.Equal([3],       FactorsOf(3));
+    Assert.Equal([2, 2],    FactorsOf(4));
+    Assert.Equal([5],       FactorsOf(5));
+    Assert.Equal([2, 3],    FactorsOf(6));
+    Assert.Equal([7],       FactorsOf(7));
+    Assert.Equal([2, 2, 2], FactorsOf(8));
+    Assert.Equal([3, 3],    FactorsOf(9));
+}
+```
+
+
+
+---
 layout: two-cols-header
 ---
 
@@ -494,7 +544,7 @@ Quale approccio cattura meglio il requisito?
 
 <div style="margin-right:.5em;">
 ```csharp
-[Theory]
+[Fact]
 void factors()
 {
     Assert.Equal([],        FactorsOf(1));
