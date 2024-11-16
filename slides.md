@@ -627,25 +627,8 @@ transition: none
 
 <div style="zoom: 100%;">
 ```csharp
-private static List<int> FactorsOf(int n)
-{
-    var remainder = n;
-    var factors = new List<int>();
-
-    if (remainder > 1)
-    {
-        if (remainder % 2 == 0)
-        {
-            factors.Add(2);
-            remainder /= 2;
-        }
-    }
-        
-    if(remainder > 1)
-        factors.Add(remainder);
-        
-    return factors;
-}
+private static List<int> FactorsOf(int n) =>
+        n > 1 ? [n] : [];
 ```
 </div>
 
@@ -655,8 +638,8 @@ transition: none
 
 # Prime Factors Kata - codice allo step 3
 
-<div style="margin-left:auto; margin-right: auto; width:100%">
-        <img src="./img/prime-factors-bugged-code-hidden.jpg" >
+<div style="margin-left:auto; margin-right: auto; width:75%">
+        <img src="./img/prime-factors-bugged-code-hidden.png" >
 </div>
 
 ---
@@ -664,8 +647,8 @@ transition: none
 
 # Prime Factors Kata - codice allo step 3
 
-<div style="margin-left:auto; margin-right: auto; width:100%">
-        <img src="./img/prime-factors-bugged-code.jpg" >
+<div style="margin-left:auto; margin-right: auto; width:75%">
+        <img src="./img/prime-factors-bugged-code.png" >
 </div>
 
 ---
