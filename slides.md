@@ -23,10 +23,12 @@ overviewSnapshots: true
 lineNumbers: true
 ---
 
-# PBT Workshop
+# PropertyPlastico
 
-Un workshop introduttivo a Property-Based Testing
-
+<span style="background-color: #FF0;
+  padding:.5em;color:black;font-weight: bold;font-size:1em;">
+  Un workshop introduttivo a Property-Based Testing
+</span>
 
 ---
 
@@ -76,7 +78,7 @@ layout: section
 
 ---
 
-# Testi verdi -> pronti per il deploy?
+# Testi verdi → pronti per il deploy?
 
 <div style="margin-left:auto; margin-right: auto; width:35%">
     <figure>
@@ -150,7 +152,7 @@ layout: two-cols-header
 layout: section
 ---
 
-# TDD != Requisiti come codice
+# TDD ≠ Requisiti come codice
 
 ---
 
@@ -323,25 +325,23 @@ void multiples_of_15_return_fizzbuzz(int multipleOf15)
 ```
 
 ```csharp
-[Theory]
-[InlineData(15)]
-[InlineData(30)]
-[InlineData(45)]
-[InlineData(60)]
-void multiples_of_15_return_fizzbuzz(int multipleOf15)
+[Property]
+Property multiples_of_15_return_fizzbuzz(int n)
 {
-    Assert.Equal("fizzbuzz", fizzbuzz(multipleOf15));
+   var multipleOf15 = n * 15;
+
+   return fizzbuzz(multipleOf15) == "fizzbuzz";
 }
 ```
 
 
 ```csharp {all|2|6|9}
 [Property]
-Property all_the_multiples_of_15_return_fizzbuzz()
+Property multiples_of_15_return_fizzbuzz()
 {
     var multiplesOf15 = Arb.From( 
         Arb.Generate<int>()
-            .Select(i => i * 15));
+           .Select(i => i * 15));
 
     return Prop.ForAll(multiplesOf15, n => 
         fizzbuzz(n) == "fizzbuzz");
@@ -349,6 +349,8 @@ Property all_the_multiples_of_15_return_fizzbuzz()
 ```
 ````
 
+---
+transition: none
 ---
 
 # Property Test di esempio: account unici e case insensitive
@@ -373,6 +375,8 @@ internal static class AuthenticationSystem
 }
 ```
 
+---
+transition: none
 ---
 
 
@@ -616,11 +620,12 @@ layout: two-cols-header
 </div>
 
 ---
+transition: none
+---
 
-# Prime Factors Kata - codice bacato
+# Prime Factors Kata - codice allo step 3
 
-
-<div style="zoom: 60%;">
+<div style="zoom: 100%;">
 ```csharp
 private static List<int> FactorsOf(int n)
 {
@@ -644,9 +649,22 @@ private static List<int> FactorsOf(int n)
 ```
 </div>
 
-<br/>
+---
+transition: none
+---
 
-<div style="margin-left:auto; margin-right: auto; width:50%">
+# Prime Factors Kata - codice allo step 3
+
+<div style="margin-left:auto; margin-right: auto; width:100%">
+        <img src="./img/prime-factors-bugged-code-hidden.jpg" >
+</div>
+
+---
+---
+
+# Prime Factors Kata - codice allo step 3
+
+<div style="margin-left:auto; margin-right: auto; width:100%">
         <img src="./img/prime-factors-bugged-code.jpg" >
 </div>
 
