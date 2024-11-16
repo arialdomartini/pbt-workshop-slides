@@ -78,10 +78,9 @@ layout: section
 
 # Testi verdi -> pronti per il deploy?
 
-<div style="margin-left:auto; margin-right: auto; width:75%">
+<div style="margin-left:auto; margin-right: auto; width:35%">
     <figure>
         <img src="./img/all-green-tests.png" >
-        <figcaption><center>Production Ready?</center></figcaption>
     </figure>
 </div>
 
