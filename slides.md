@@ -513,6 +513,7 @@ bool ContainNoDuplicates(IEnumerable<string> xs) =>
 
 <br/>
 
+<div v-click>
 ```csharp
 [Property]
 bool account_names_are_case_insensitive_(Employee employee)
@@ -524,6 +525,7 @@ bool account_names_are_case_insensitive_(Employee employee)
     return AuthenticationSystem.Login(upper);
 }
 ```
+</div>
 
 ---
 
@@ -535,7 +537,9 @@ bool account_names_are_case_insensitive_(Employee employee)
 
 <br/>
 
-```csharp {all|4,5|7|8|10|12-13|8,10,16-18}
+<div v-click="1">
+
+```csharp {all|all|4,5|7|8|10|12-13|8,10,16-18}
 [Property]
 bool
 we_never_apply_more_than_1_discount_and_we_always_select_the_most_convenient_discount(
@@ -557,12 +561,37 @@ we_never_apply_more_than_1_discount_and_we_always_select_the_most_convenient_dis
 }
 
 ```
+</div>
 
 ---
 
 # Esempio con generatore
 
+````md magic-move {lines: true}
 ```csharp {all|1-4|6-7|9-20|17|18|19|all}
+private static readonly Gen<Product> SomeProducts =
+    from s in Arb.Generate<NonEmptyString>()
+    from p in Arb.Generate<Product>()
+    select p with { Name = s.Get };
+
+internal static readonly Gen<List<Product>> Assortments = from assortment in Gen.ListOf(SomeProducts)
+    select assortment.DistinctBy(p => p.Name).ToList();
+
+[Property]
+Property ????() =>
+    Prop.ForAll(Assortments.ToArbitrary(),
+        assortmentOfProducts =>
+        {
+            var catalog = new Catalog(assortmentOfProducts);
+             var listOfProducts = catalog.Products;
+             return
+                listOfProducts.EachProductIsLexicographicallyLessThanTheNext() &&
+                listOfProducts.ContainsSameElementsOf(assortmentOfProducts) &&
+                SortingAgainIsIdempotent(listOfProducts);
+        });
+```
+
+```csharp
 private static readonly Gen<Product> SomeProducts =
     from s in Arb.Generate<NonEmptyString>()
     from p in Arb.Generate<Product>()
@@ -585,6 +614,8 @@ Property the_catalog_always_lists_products_in_alphabetical_order() =>
         });
 ```
 
+
+````
 ---
 
 # Lati negativi
