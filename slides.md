@@ -35,13 +35,15 @@ lineNumbers: true
 
 # Agenda
 
-<div style="zoom:.75;">
+<div v-click style="zoom:.75;">
 
 > **Teoria** (ma con codice)
 >  * Example Based vs Property Based
 >  * Esempi di codice (in C#)
 
 <br/>
+</div>
+<div v-click style="zoom:.75;">
 
 > **Pratica: Limiti di TDD**
 >  * Il Prime Factor Kata di Robert Martin
@@ -49,6 +51,8 @@ lineNumbers: true
 >    * In PBT
 
 <br/>
+</div>
+<div v-click style="zoom:.75;">
 
 
 > **Teoria**
@@ -59,11 +63,15 @@ lineNumbers: true
 >    * Enterprise Developer from Hell di Scott Wlaschin
 
 <br/>
+</div>
+<div v-click style="zoom:.75;">
 
 > **Pratica: Design Emergente**
 >  * Il Print Diamond Kata
 
 <br/>
+</div>
+<div v-click style="zoom:.75;">
 
 > **Pratica: caso reale**
 >  * Supermarket Kata di Ferdinando Santacroce
@@ -85,6 +93,19 @@ layout: section
         <img src="./img/all-green-tests.png" >
     </figure>
 </div>
+
+---
+
+# TDD is not about testing
+
+<br/>
+<div style="margin-left:auto; margin-right: auto; width:50%">
+    <figure>
+        <img src="./img/luca-pacioli.jpg" >
+        <figcaption><center>Luca Pacioli (1455-1517)</center></figcaption>
+    </figure>
+</div>
+
 
 ---
 
