@@ -152,7 +152,7 @@ layout: two-cols-header
 
 <v-clicks>
 
-- `[Fact]` + `[Theory]` > `[Fact]`
+- `Theory > n * Fact`
 - Non servono librerie
 
 </v-clicks>
@@ -176,10 +176,93 @@ layout: section
 # TDD ≠ Requisiti come codice
 
 ---
+transition: none
+---
 
-# Slide di KP
+# Slide per PM e C-level
 
-qui
+<div style="margin-left:auto; margin-right: auto; width:95%">
+    <figure>
+        <img src="./img/k/1.png" >
+    </figure>
+</div>
+
+---
+transition: none
+---
+
+# Slide per PM e C-level
+
+<div style="margin-left:auto; margin-right: auto; width:95%">
+    <figure>
+        <img src="./img/k/2.png" >
+    </figure>
+</div>
+
+---
+transition: none
+---
+
+# Slide per PM e C-level
+
+<div style="margin-left:auto; margin-right: auto; width:95%">
+    <figure>
+        <img src="./img/k/3.png" >
+    </figure>
+</div>
+
+---
+transition: none
+---
+
+# Slide per PM e C-level
+
+<div style="margin-left:auto; margin-right: auto; width:95%">
+    <figure>
+        <img src="./img/k/4.png" >
+    </figure>
+</div>
+
+---
+transition: none
+---
+
+# Slide per PM e C-level
+
+<div style="margin-left:auto; margin-right: auto; width:95%">
+    <figure>
+        <img src="./img/k/5.png" >
+    </figure>
+</div>
+
+---
+transition: none
+---
+
+# Slide per PM e C-level
+
+<div style="margin-left:auto; margin-right: auto; width:95%">
+    <figure>
+        <img src="./img/k/6.png" >
+    </figure>
+</div>
+
+---
+
+# Slide per PM e C-level
+
+<div style="margin-left:auto; margin-right: auto; width:95%">
+    <figure>
+        <img src="./img/k/7.png" >
+    </figure>
+</div>
+
+
+<div style="position:absolute; top:400px; left:555px; width:100px;">
+    <figure>
+        <img src="./img/k/robot.gif" >
+    </figure>
+</div>
 
 ---
 
