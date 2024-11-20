@@ -671,6 +671,16 @@ layout: section
 # Coding Session<br/>Prime Factors Kata
 
 ---
+
+# Coding Session<br/>Prime Factors Kata
+
+- Scrivere una funzione `FactorsOf(int n)` che calcoli i fattori
+  primi di `n`.
+- Un numero è primo se non è divisibile solo nessun altro numero (a
+  parte per sé stesso e per `1`).
+- Dei numeri sono "fattori di `n`" se il loro prodotto è `n`.
+
+---
 layout: two-cols-header
 ---
 
