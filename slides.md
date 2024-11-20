@@ -7,7 +7,8 @@ background: /background.jpg
 # some information about your slides (markdown enabled)
 title: PBT Workshop
 info: |
-  Un workshop introduttivo a Property-Based Testing
+  Un workshop introduttivo a Property-Based Testing<br/>
+  
   
 # apply unocss classes to the current slide
 class: text-center
@@ -29,6 +30,22 @@ lineNumbers: true
   padding:.5em;color:black;font-weight: bold;font-size:1em;">
   Un workshop introduttivo a Property-Based Testing
 </span>
+
+<div style="margin-left:auto;margin-right:auto;width:750px;margin-top:9em;background-color: #000; padding:.5em;color:white;font-weight: bold;font-size:1em;font-family: 'Courier New', Courier, monospace;">
+  https://bit.ly/property-plastico
+</div>
+
+
+---
+
+# Link
+
+| Kata                   | Link                                                      |
+|------------------------|-----------------------------------------------------------|
+| **Prime Factors Kata** | https://github.com/arialdomartini/pbt-prime-factors-kata  |
+| **Print Diamond Kata** | https://github.com/arialdomartini/diamond-pbt             |
+| **Supermarket Kata**   | https://github.com/arialdomartini/KataSupermarket-PBT     |
+|                        | https://github.com/jesuswasrasta/KataSupermarket-workshop |
 
 ---
 
