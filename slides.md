@@ -2042,6 +2042,24 @@ layout: section
 
 ---
 
+# Print Diamond Kataka
+
+```
+     A
+    B B
+   C   C
+  D     D
+ E       E
+F         F
+ E       E
+  D     D
+   C   C
+    B B
+     A
+```
+
+---
+
 # Sviluppo incrementale
 
 <br/>
